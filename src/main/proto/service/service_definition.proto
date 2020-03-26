@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package de.unistuttgart.isw.sfsc.example.services.messages;
+
+option java_multiple_files = true;
+
+message PLC4XReadRequest {
+    string connectionString = 1;
+    string variableAdress = 2;
+    string name = 3;
+    string type = 4;
+
+}
+
+
+message PLC4XReadReply {
+    string value = 1;
+    string status = 2;
+}
+
+message PLC4XMonitorUpdate{
+    map<string, string>  values = 1;
+    string itemStatus = 2;
+    Timestamp time = 3;
+
+    message Timestamp {
+        // Represents seconds of UTC time since Unix epoch
+        // 1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to
+        // 9999-12-31T23:59:59Z inclusive.
+        int64 seconds = 1;
+
+        // Non-negative fractions of a second at nanosecond resolution. Negative
+        // second values with fractions must still have non-negative nanos values
+        // that count forward in time. Must be from 0 to 999,999,999
+        // inclusive.
+        int32 nanos = 2;
+    }
+}
+
+
+message PLC4XMonitoringRequest{
+    string connectionString = 1;
+    uint32 samplingTime = 2;
+    map<string, string> variables = 3;
+    string type = 4;
+}
+
+message PLC4XMonitoringReply{
+    string status = 1;
+    string errorMessage = 2;
+
+}
