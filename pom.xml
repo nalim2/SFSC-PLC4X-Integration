@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>sfsc</groupId>
+    <artifactId>plc4x-integration</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+
+
+    <properties>
+        <revision>0.1.0-SNAPSHOT</revision>
+
+        <slf4j.version>1.7.28</slf4j.version>
+        <protobuf.version>3.10.0</protobuf.version>
+        <jeromq.version>0.5.1</jeromq.version>
+        <hazelcast.version>3.12.3</hazelcast.version>
+
+        <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
+        <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
+        <dockerfile-maven.version>1.4.12</dockerfile-maven.version>
+
+        <java.version>12</java.version>
+        <encoding>UTF-8</encoding>
+
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+    </properties>
+    <build>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>10</source>
+                    <target>10</target>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <!-->
+                                        <excludes>META-INF/*.DSA</excludes>
+                                        <excludes>META-INF/*.RSA</excludes>
+                                        <-->
+                                        <excludes>META-INF/*.SF</excludes>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                        <transformers combine.children="append">
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>de.unistuttgart.isw.sfsc.Main</mainClass>
+                            </transformer>
+                        </transformers>
+
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <usedDependencies combine.children="append">
+
+                        <usedDependency>org.apache.plc4x:plc4j-driver-opcua</usedDependency>
+                        <usedDependency>org.apache.plc4x:plc4j-scraper</usedDependency>
+                        <usedDependency>org.apache.plc4x:plc4j-connection-pool</usedDependency>
+
+                        <usedDependency>com.github.nalim2:adapter</usedDependency>
+                        <usedDependency>com.github.nalim2:framework</usedDependency>
+                        <usedDependency>com.github.nalim2:common-java</usedDependency>
+                        <usedDependency>com.github.nalim2:proto</usedDependency>
+
+                        <usedDependency>com.google.code.gson:gson</usedDependency>
+                        <usedDependency>com.hazelcast:hazelcast</usedDependency>
+
+                        <usedDependency>com.google.protobuf:protobuf-java</usedDependency>
+
+                        <usedDependency>org.eclipse.milo:server-examples</usedDependency>
+                        <usedDependency>org.zeromq:jeromq</usedDependency>
+
+                    </usedDependencies>
+
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>0.6.1</version>
+                <configuration>
+                    <protocExecutable>protoc</protocExecutable>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+
+
+        </plugins>
+    </build>
+
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.eclipse.milo</groupId>
+            <artifactId>server-examples</artifactId>
+            <version>0.3.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.zeromq</groupId>
+            <artifactId>jeromq</artifactId>
+            <version>${jeromq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.plc4x</groupId>
+            <artifactId>plc4j-connection-pool</artifactId>
+            <version>0.7.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.plc4x</groupId>
+            <artifactId>plc4j-scraper</artifactId>
+            <version>0.7.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.plc4x</groupId>
+            <artifactId>plc4j-driver-opcua</artifactId>
+            <version>0.7.0-SNAPSHOT</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.github.nalim2</groupId>
+            <artifactId>adapter</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.nalim2</groupId>
+            <artifactId>framework</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.nalim2</groupId>
+            <artifactId>common-java</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nalim2</groupId>
+            <artifactId>proto</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+            <version>3.12.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.11.1</version>
+        </dependency>
+
+    </dependencies>
+
+</project>
