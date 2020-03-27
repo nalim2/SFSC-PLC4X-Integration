@@ -6,7 +6,6 @@ import de.unistuttgart.isw.sfsc.adapter.BootstrapConfiguration;
 import de.unistuttgart.isw.sfsc.commonjava.util.StoreEvent;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XReadReply;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XReadRequest;
-import io.vavr.collection.List;
 import servicepatterns.api.SfscClient;
 import servicepatterns.api.SfscServiceApi;
 import servicepatterns.api.SfscServiceApiFactory;

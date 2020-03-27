@@ -40,7 +40,7 @@ import java.util.function.Function;
 public class PLC4XMonitoringService {
     static BootstrapConfiguration bootstrapConfiguration1;
     static ByteString uuid = ByteString.copyFromUtf8(UUID.randomUUID().toString());
-    static String ServiceName = "de.universitystuttgart.isw.sfsc.plc4x.monitoring.scapper";
+    static String ServiceName = "de.universitystuttgart.isw.sfsc.plc4x.monitoring.scrapper";
     static String ChannelName = UUID.randomUUID().toString();
     static Logger log = LoggerFactory.getLogger(PLC4XMonitoringService.class);
 
