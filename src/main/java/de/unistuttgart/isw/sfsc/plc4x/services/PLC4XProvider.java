@@ -3,11 +3,12 @@ package de.unistuttgart.isw.sfsc.plc4x.services;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
+import de.unistuttgart.isw.sfsc.adapter.configuration.AdapterConfiguration;
 import de.unistuttgart.isw.sfsc.config.Constants;
-import de.unistuttgart.isw.sfsc.adapter.BootstrapConfiguration;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XReadReply;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XReadRequest;
-import de.unistuttgart.isw.sfsc.framework.descriptor.RegexDefinition;
+import de.unistuttgart.isw.sfsc.framework.descriptor.SfscServiceDescriptor;
+import de.unistuttgart.isw.sfsc.framework.descriptor.SfscServiceDescriptor.ServerTags.RegexDefinition;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
@@ -15,6 +16,7 @@ import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
 import org.apache.plc4x.java.opcua.connection.OpcuaTcpPlcConnection;
 import servicepatterns.api.SfscServer;
+import servicepatterns.api.SfscServerParameter;
 import servicepatterns.api.SfscServiceApi;
 import servicepatterns.api.SfscServiceApiFactory;
 import servicepatterns.basepatterns.ackreqrep.AckServerResult;
@@ -25,29 +27,29 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
+import static de.unistuttgart.isw.sfsc.config.Constants.CORE_PORT;
+
 public class PLC4XProvider {
 
-    static BootstrapConfiguration bootstrapConfiguration1;
 
     public static void main(String[] args) {
-        bootstrapConfiguration1 = new BootstrapConfiguration(Constants.CORE_ADDRESS, Constants.CORE_PORT);
+        AdapterConfiguration adapterConfiguration1 = new AdapterConfiguration().setCoreHost(Constants.CORE_ADDRESS).setCorePubTcpPort(Constants.CORE_PORT);
         try {
-            SfscServiceApi serverSfscServiceApi = SfscServiceApiFactory.getSfscServiceApi(bootstrapConfiguration1);
-            SfscServer server = serverSfscServiceApi.server("de.universitystuttgart.isw.sfsc.plc4x.read",
-                    ByteString.copyFromUtf8("de.universitystuttgart.isw.sfsc.PLC4XReadRequest"),
-                    ByteString.copyFromUtf8(UUID.randomUUID().toString()),
-                    ByteString.copyFromUtf8("de.universitystuttgart.isw.sfsc.PLC4XReadReply"),
+            SfscServiceApi serverSfscServiceApi = SfscServiceApiFactory.getSfscServiceApi(adapterConfiguration1);
+            SfscServer server = serverSfscServiceApi.server(new SfscServerParameter().setServiceName("de.universitystuttgart.isw.sfsc.plc4x.read")
+                .setInputMessageType(ByteString.copyFromUtf8("de.universitystuttgart.isw.sfsc.PLC4XReadRequest"))
+                 .setOutputMessageType(ByteString.copyFromUtf8("de.universitystuttgart.isw.sfsc.PLC4XReadReply"))
+                    .setRegexDefinition(
                     RegexDefinition.newBuilder()
                             .addRegexes(RegexDefinition.VarRegex.newBuilder()
                                     .setVarName("type")
                                     .setStringRegex(RegexDefinition.VarRegex.StringRegex.newBuilder().setRegex("*").build())
                                     .build())
-                            .build(),
-                    Map.of("plc4x-service-type", ByteString.copyFromUtf8("opc")),
-                    replyFunction(), // Hier wird die Reply Funktion hineingegeben
-                    1000,
-                    100,
-                    3);
+                            .build())
+                            .setCustomTags(Map.of("plc4x-service-type", ByteString.copyFromUtf8("opc")))
+                    ,
+                    replyFunction() // Hier wird die Reply Funktion hineingegeben
+                  );
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -79,7 +81,7 @@ public class PLC4XProvider {
                 PlcReadResponse response = opcuaConnection.read(requestRead).get();
                 statusResult = response.getResponseCode("LonlyVar").toString();
                 if(response.getResponseCode("LonlyVar").equals(PlcResponseCode.OK)){
-                    valueResult = response.getAsPlcValue().getValue("LonlyVar").getString();
+                    valueResult = response.getString("LonlyVar");
                 }
             } catch (InterruptedException e) {
                 statusResult = "BAD";

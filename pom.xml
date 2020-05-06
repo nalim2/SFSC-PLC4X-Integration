@@ -12,6 +12,7 @@
     <properties>
         <revision>0.1.0-SNAPSHOT</revision>
 
+        <plc4x.version>0.6.1-SNAPSHOT</plc4x.version>
         <slf4j.version>1.7.28</slf4j.version>
         <protobuf.version>3.10.0</protobuf.version>
         <jeromq.version>0.5.1</jeromq.version>
@@ -22,7 +23,6 @@
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
         <dockerfile-maven.version>1.4.12</dockerfile-maven.version>
-
         <java.version>12</java.version>
         <encoding>UTF-8</encoding>
 
@@ -159,42 +159,39 @@
         <dependency>
             <groupId>org.apache.plc4x</groupId>
             <artifactId>plc4j-connection-pool</artifactId>
-            <version>0.7.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.plc4x</groupId>
-            <artifactId>plc4j-scraper</artifactId>
-            <version>0.7.0-SNAPSHOT</version>
+            <version>${plc4x.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.plc4x</groupId>
             <artifactId>plc4j-driver-opcua</artifactId>
-            <version>0.7.0-SNAPSHOT</version>
+            <version>${plc4x.version}</version>
         </dependency>
 
 
-        <dependency>
-            <groupId>com.github.nalim2</groupId>
-            <artifactId>adapter</artifactId>
-            <version>0.1.0</version>
-        </dependency>
+
 
         <dependency>
             <groupId>com.github.nalim2</groupId>
             <artifactId>framework</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.nalim2</groupId>
+            <artifactId>adapter</artifactId>
+            <version>0.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.nalim2</groupId>
             <artifactId>common-java</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.nalim2</groupId>
             <artifactId>proto</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1</version>
         </dependency>
 
 

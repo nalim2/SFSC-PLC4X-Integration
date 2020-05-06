@@ -4,8 +4,10 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.StringValue;
 import de.unistuttgart.isw.sfsc.adapter.BootstrapConfiguration;
+import de.unistuttgart.isw.sfsc.adapter.configuration.AdapterConfiguration;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitorUpdate;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitoringRequest;
+import de.unistuttgart.isw.sfsc.framework.descriptor.SfscServiceDescriptor;
 import servicepatterns.api.SfscClient;
 import servicepatterns.api.SfscServiceApi;
 import servicepatterns.api.SfscServiceApiFactory;
@@ -17,14 +19,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class PLC4XChannelConsumer {
-    static BootstrapConfiguration bootstrapConfiguration1 = new BootstrapConfiguration("127.0.0.1", 1251);
+    static AdapterConfiguration adapterConfiguration = new AdapterConfiguration();
     static ByteString uuid = ByteString.copyFromUtf8(UUID.randomUUID().toString());
-    static String ServiceName = "de.universitystuttgart.isw.sfsc.plc4x.monitoring.scapper";
+    static String ServiceName = "de.universitystuttgart.isw.sfsc.plc4x.monitoring.scrapper";
     public static void main(String[] args) {
         SfscServiceApi serverSfscServiceApi = null;
         try {
-            serverSfscServiceApi = SfscServiceApiFactory.getSfscServiceApi(bootstrapConfiguration1);
-            Map<String, ByteString> genServerTags = null;
+            serverSfscServiceApi = SfscServiceApiFactory.getSfscServiceApi(adapterConfiguration);
+            SfscServiceDescriptor genServerTags = null;
 
             while (genServerTags == null){
                 genServerTags = serverSfscServiceApi.getServices(ServiceName).stream()
@@ -37,7 +39,7 @@ public class PLC4XChannelConsumer {
                     .setSamplingTime(1000)
                     .setConnectionString("opcua:tcp://127.0.0.1:12686/milo?discovery=false")
                     .setType("opc")
-                    .putVariables("TestVar", "ns=2;s=HelloWorld/ScalarTypes/String")
+                    .putVariables("TestVar", "ns=2;s=HelloWorld/ScalarTypes/Int16")
                     .build();
 
             SfscClient client2 = serverSfscServiceApi.client();
@@ -48,7 +50,7 @@ public class PLC4XChannelConsumer {
                     message -> {
                         try {
                             PLC4XMonitorUpdate plc4XMonitorUpdate = PLC4XMonitorUpdate.parseFrom(message);
-                            System.out.println("Received Update: " + plc4XMonitorUpdate .getValuesMap() + " \n at " + plc4XMonitorUpdate.getTime().getSeconds());
+                            System.out.println("Received Update: " + plc4XMonitorUpdate .getValuesOrDefault("TestVar", "NotSetValue") + " \n at " + plc4XMonitorUpdate.getTime().getSeconds());
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
                         }
