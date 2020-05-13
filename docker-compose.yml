@@ -2,7 +2,7 @@ version: "3"
 services:
   core1:
     container_name: core1
-    image: "nalim2/sfsc-core-local"
+    image: "nalim2/sfsc-core"
     ports:
       - "1250:1250"
       - "1251:1251"

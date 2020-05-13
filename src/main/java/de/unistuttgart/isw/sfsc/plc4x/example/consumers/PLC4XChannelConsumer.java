@@ -3,7 +3,6 @@ package de.unistuttgart.isw.sfsc.plc4x.example.consumers;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.StringValue;
-import de.unistuttgart.isw.sfsc.adapter.BootstrapConfiguration;
 import de.unistuttgart.isw.sfsc.adapter.configuration.AdapterConfiguration;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitorUpdate;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitoringRequest;

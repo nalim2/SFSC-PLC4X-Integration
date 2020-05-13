@@ -2,8 +2,8 @@ package de.unistuttgart.isw.sfsc.plc4x.services;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import de.unistuttgart.isw.sfsc.adapter.configuration.AdapterConfiguration;
 import de.unistuttgart.isw.sfsc.config.Constants;
-import de.unistuttgart.isw.sfsc.adapter.BootstrapConfiguration;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitorUpdate;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitoringRequest;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitorUpdate.Timestamp;
@@ -14,13 +14,6 @@ import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
-import org.apache.plc4x.java.scraper.config.JobConfigurationImpl;
-import org.apache.plc4x.java.scraper.config.ScraperConfiguration;
-import org.apache.plc4x.java.scraper.config.triggeredscraper.ScraperConfigurationTriggeredImpl;
-import org.apache.plc4x.java.scraper.exception.ScraperException;
-import org.apache.plc4x.java.scraper.triggeredscraper.TriggeredScraperImpl;
-import org.apache.plc4x.java.scraper.triggeredscraper.triggerhandler.collector.TriggerCollector;
-import org.apache.plc4x.java.scraper.triggeredscraper.triggerhandler.collector.TriggerCollectorImpl;
 import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReadRequest;
 import org.slf4j.Logger;
@@ -38,12 +31,12 @@ import java.util.function.Function;
 
 
 public class PLC4XMonitoringService {
-    static BootstrapConfiguration bootstrapConfiguration1;
+    static AdapterConfiguration bootstrapConfiguration1;
     static ByteString uuid = ByteString.copyFromUtf8(UUID.randomUUID().toString());
     static String ServiceName = "de.universitystuttgart.isw.sfsc.plc4x.monitoring.scrapper";
     static String ChannelName = UUID.randomUUID().toString();
     static Logger log = LoggerFactory.getLogger(PLC4XMonitoringService.class);
-    static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
+    static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
 
     static PlcDriverManager driverManager = new PooledPlcDriverManager(pooledPlcConnectionFactory -> {
         GenericKeyedObjectPoolConfig<PlcConnection> config = new GenericKeyedObjectPoolConfig<>();
@@ -58,9 +51,8 @@ public class PLC4XMonitoringService {
     });
 
     public static void main(String[] args) {
-        bootstrapConfiguration1 = new BootstrapConfiguration(Constants.CORE_ADDRESS, Constants.CORE_PORT);
-
-
+        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "WARN");
+        bootstrapConfiguration1 = new AdapterConfiguration().setCoreHost(Constants.CORE_ADDRESS).setCorePubTcpPort(Constants.CORE_PORT);
         registerSFSCService();
 
     }
@@ -69,11 +61,7 @@ public class PLC4XMonitoringService {
         try {
             SfscServiceApi serverSfscServiceApi = SfscServiceApiFactory.getSfscServiceApi(bootstrapConfiguration1);
             ChannelGenerator channelGenerator = new ChannelGenerator(serverSfscServiceApi);
-            SfscServer channelGeneratorServer = serverSfscServiceApi.channelGenerator(
-                    ServiceName,
-                    Map.of("id", uuid), // custom Tags
-                    ByteString.copyFromUtf8(UUID.randomUUID().toString()), // Server Topic --> will be encapsulated
-                    ByteString.copyFromUtf8("ignored"), // Description of the input message type
+            SfscServer channelGeneratorServer = serverSfscServiceApi.channelFactory(new SfscChannelFactoryParameter().setServiceName(ServiceName).setInputMessageType(ByteString.copyFromUtf8(PLC4XMonitoringRequest.class.getName())),
                     channelGenerator); // channel factory
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -96,7 +84,9 @@ public class PLC4XMonitoringService {
 
         @Override
         public SfscPublisher apply(ByteString sfscMessage) {
-            SfscPublisherParameter params = new SfscPublisherParameter().setServiceName(ChannelName).setOutputMessageType(ByteString.copyFromUtf8(PLC4XMonitoringRequest.class.getName())).setUnregistered(true);
+            SfscPublisherParameter params = new SfscPublisherParameter()
+                    .setServiceName(ChannelName)
+                    .setOutputMessageType(ByteString.copyFromUtf8(PLC4XMonitoringRequest.class.getName())).setUnregistered(true);
             SfscPublisher publisher = sfscServiceApi.publisher(params); // custom Tags
             try {
                 PLC4XMonitoringRequest request = PLC4XMonitoringRequest.parseFrom(sfscMessage);
@@ -143,7 +133,7 @@ public class PLC4XMonitoringService {
                         }
                     }
 
-                }, 2000, request.getSamplingTime(), TimeUnit.MILLISECONDS);
+                }, 0, request.getSamplingTime(), TimeUnit.MILLISECONDS);
 
                 // TODO include a function to automatic delete a handle after unsubscribe
 

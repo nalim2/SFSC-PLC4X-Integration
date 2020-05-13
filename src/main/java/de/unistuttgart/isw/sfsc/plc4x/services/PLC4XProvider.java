@@ -40,12 +40,7 @@ public class PLC4XProvider {
                 .setInputMessageType(ByteString.copyFromUtf8("de.universitystuttgart.isw.sfsc.PLC4XReadRequest"))
                  .setOutputMessageType(ByteString.copyFromUtf8("de.universitystuttgart.isw.sfsc.PLC4XReadReply"))
                     .setRegexDefinition(
-                    RegexDefinition.newBuilder()
-                            .addRegexes(RegexDefinition.VarRegex.newBuilder()
-                                    .setVarName("type")
-                                    .setStringRegex(RegexDefinition.VarRegex.StringRegex.newBuilder().setRegex("*").build())
-                                    .build())
-                            .build())
+                    RegexDefinition.newBuilder().build())
                             .setCustomTags(Map.of("plc4x-service-type", ByteString.copyFromUtf8("opc")))
                     ,
                     replyFunction() // Hier wird die Reply Funktion hineingegeben
