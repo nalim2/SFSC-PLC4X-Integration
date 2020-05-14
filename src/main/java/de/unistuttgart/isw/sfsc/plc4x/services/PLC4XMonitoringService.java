@@ -5,8 +5,9 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import de.unistuttgart.isw.sfsc.adapter.configuration.AdapterConfiguration;
 import de.unistuttgart.isw.sfsc.config.Constants;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitorUpdate;
-import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitoringRequest;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitorUpdate.Timestamp;
+import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitoringRequest;
+import de.unistuttgart.isw.sfsc.framework.api.*;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.apache.plc4x.java.PlcDriverManager;
@@ -15,17 +16,17 @@ import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
-import org.eclipse.milo.opcua.stack.core.types.structured.ReadRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import servicepatterns.api.*;
 
 import java.math.BigDecimal;
 import java.net.ConnectException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.function.Function;
 
@@ -127,7 +128,7 @@ public class PLC4XMonitoringService {
                         e.printStackTrace();
                     }finally {
                         try {
-                            connection.close();
+                            if(connection != null) connection.close();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

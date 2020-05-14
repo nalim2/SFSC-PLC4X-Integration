@@ -7,27 +7,23 @@ import de.unistuttgart.isw.sfsc.adapter.configuration.AdapterConfiguration;
 import de.unistuttgart.isw.sfsc.config.Constants;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XReadReply;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XReadRequest;
-import de.unistuttgart.isw.sfsc.framework.descriptor.SfscServiceDescriptor;
+import de.unistuttgart.isw.sfsc.framework.api.SfscServer;
+import de.unistuttgart.isw.sfsc.framework.api.SfscServerParameter;
+import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApi;
+import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApiFactory;
 import de.unistuttgart.isw.sfsc.framework.descriptor.SfscServiceDescriptor.ServerTags.RegexDefinition;
+import de.unistuttgart.isw.sfsc.framework.patterns.ackreqrep.AckServerResult;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
 import org.apache.plc4x.java.opcua.connection.OpcuaTcpPlcConnection;
-import servicepatterns.api.SfscServer;
-import servicepatterns.api.SfscServerParameter;
-import servicepatterns.api.SfscServiceApi;
-import servicepatterns.api.SfscServiceApiFactory;
-import servicepatterns.basepatterns.ackreqrep.AckServerResult;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
-
-import static de.unistuttgart.isw.sfsc.config.Constants.CORE_PORT;
 
 public class PLC4XProvider {
 
