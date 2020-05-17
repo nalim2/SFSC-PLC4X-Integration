@@ -24,27 +24,20 @@ public class PLC4XConsumer {
         try {
             SfscServiceApi clientSfscServiceApi = SfscServiceApiFactory.getSfscServiceApi(adapterConfiguration);
 
-            Set<SfscServiceDescriptor> exampleServiceTags = clientSfscServiceApi.getServices("de.universitystuttgart.isw.sfsc.plc4x.read");
 
-            try {
-                SfscServiceApi serverSfscServiceApi = SfscServiceApiFactory.getSfscServiceApi(adapterConfiguration);
-                serverSfscServiceApi.addOneShotRegistryStoreEventListener(
+
+
+                clientSfscServiceApi.addOneShotRegistryStoreEventListener(
                         event -> event.getStoreEventType() == StoreEvent.StoreEventType.CREATE
                                  && Objects.equals(event.getData().getServiceName(), "de.universitystuttgart.isw.sfsc.plc4x.read")
                 ).await();
+                Set<SfscServiceDescriptor> exampleServiceTags = clientSfscServiceApi.getServices("de.universitystuttgart.isw.sfsc.plc4x.read");
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            }
 
             SfscClient client = clientSfscServiceApi.client();
             for ( SfscServiceDescriptor tags: exampleServiceTags) {
                 PLC4XReadRequest readRequest = PLC4XReadRequest.newBuilder()
-                        .setConnectionString("opcua:tcp://127.0.0.1:12686/milo?discovery=false")
+                        .setConnectionString("opcua:tcp://127.0.0.1:12686/milo")
                         .setVariableAdress("ns=2;s=HelloWorld/ScalarTypes/String")
                         .setName("Nutzlos")
                         .setType("opc")
