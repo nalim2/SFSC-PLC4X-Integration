@@ -21,14 +21,14 @@ services:
       - BACKEND_HOST=core1
       - HAZELCAST_PORT=5701
 
-#  monitoring-service:
-#    image: "nalim2/sfsc-plc4x-monitoring:latest"
-#
-#    environment:
-#      - EXTERNEL_CORE_IP=core1
-#      - EXTERNEL_CORE_PORT=1251
-#      - RUN_MONITORING_SERVICE=true
-#      - RUN_READ_SERVICE=true
-#      - RUN_WRITE_SERVICE=false
-#    links:
-#      - core1
+  monitoring-service:
+    image: "nalim2/sfsc-plc4x-monitoring:latest"
+
+    environment:
+      - EXTERNEL_CORE_IP=core1
+      - EXTERNEL_CORE_PORT=1251
+      - RUN_MONITORING_SERVICE=true
+      - RUN_READ_SERVICE=true
+      - RUN_WRITE_SERVICE=false
+    links:
+      - core1
