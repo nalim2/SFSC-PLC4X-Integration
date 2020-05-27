@@ -11,6 +11,17 @@
 
     <repositories>
         <repository>
+            <id>repository.apache.org</id>
+            <url>http://repository.apache.org/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
             <id>oss.sonatype.org-snapshot</id>
             <url>http://oss.sonatype.org/content/repositories/snapshots</url>
             <releases>
@@ -22,14 +33,18 @@
         </repository>
     </repositories>
 
+
+
+
     <properties>
         <revision>0.1.0-SNAPSHOT</revision>
 
-        <plc4x.version>0.6.0</plc4x.version>
+        <plc4x.version>0.7.0-SNAPSHOT</plc4x.version>
         <slf4j.version>1.7.28</slf4j.version>
         <protobuf.version>3.10.0</protobuf.version>
         <jeromq.version>0.5.1</jeromq.version>
         <hazelcast.version>3.12.3</hazelcast.version>
+        <sfsc.version>0.1.7</sfsc.version>
 
         <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
         <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
@@ -177,7 +192,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.apache.plc4x</groupId>
+            <artifactId>plc4j-api</artifactId>
+            <version>
+                ${plc4x.version}</version>
 
+        </dependency>
         <dependency>
             <groupId>org.apache.plc4x</groupId>
             <artifactId>plc4j-driver-opcua</artifactId>
@@ -201,7 +222,7 @@
         <dependency>
             <groupId>com.github.nalim2</groupId>
             <artifactId>framework</artifactId>
-            <version>0.1.6-SNAPSHOT</version>
+            <version>0.1.7</version>
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>

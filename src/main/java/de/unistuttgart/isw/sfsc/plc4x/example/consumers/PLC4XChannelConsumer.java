@@ -5,10 +5,10 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import de.unistuttgart.isw.sfsc.adapter.configuration.AdapterConfiguration;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitorUpdate;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitoringRequest;
-import de.unistuttgart.isw.sfsc.framework.api.SfscClient;
 import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApi;
 import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApiFactory;
-import de.unistuttgart.isw.sfsc.framework.api.SfscSubscriber;
+import de.unistuttgart.isw.sfsc.framework.api.services.clientserver.SfscClient;
+import de.unistuttgart.isw.sfsc.framework.api.services.pubsub.SfscSubscriber;
 import de.unistuttgart.isw.sfsc.framework.descriptor.SfscServiceDescriptor;
 
 import java.util.UUID;
