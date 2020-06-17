@@ -34,7 +34,7 @@ public class PLC4XChannelConsumer {
 
             PLC4XMonitoringRequest testRequest = PLC4XMonitoringRequest.newBuilder()
                     .setSamplingTime(1000)
-                    .setConnectionString("opcua:tcp://127.0.0.1:12686/milo?discovery=false")
+                    .setConnectionString("opcua:tcp://milo.digitalpetri.com:62541/milo")
                     .setType("opc")
                     .putVariables("TestVar", "ns=2;s=HelloWorld/ScalarTypes/Int16")
                     .build();
