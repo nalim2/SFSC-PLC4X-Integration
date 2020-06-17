@@ -37,7 +37,7 @@ public class PLC4XConsumer {
             SfscClient client = clientSfscServiceApi.client();
             for ( SfscServiceDescriptor tags: exampleServiceTags) {
                 PLC4XReadRequest readRequest = PLC4XReadRequest.newBuilder()
-                        .setConnectionString("opcua:tcp://127.0.0.1:12686/milo")
+                        .setConnectionString("opcua:tcp://milo.digitalpetri.com:62541/milo")
                         .setVariableAdress("ns=2;s=HelloWorld/ScalarTypes/String")
                         .setName("Nutzlos")
                         .setType("opc")
