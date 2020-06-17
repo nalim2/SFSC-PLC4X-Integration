@@ -6,9 +6,9 @@ import de.unistuttgart.isw.sfsc.adapter.configuration.AdapterConfiguration;
 import de.unistuttgart.isw.sfsc.commonjava.util.StoreEvent;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XReadReply;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XReadRequest;
-import de.unistuttgart.isw.sfsc.framework.api.SfscClient;
 import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApi;
 import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApiFactory;
+import de.unistuttgart.isw.sfsc.framework.api.services.clientserver.SfscClient;
 import de.unistuttgart.isw.sfsc.framework.descriptor.SfscServiceDescriptor;
 
 import java.util.Objects;

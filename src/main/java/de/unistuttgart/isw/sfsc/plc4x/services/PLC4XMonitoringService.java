@@ -7,7 +7,12 @@ import de.unistuttgart.isw.sfsc.config.Constants;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitorUpdate;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitorUpdate.Timestamp;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitoringRequest;
-import de.unistuttgart.isw.sfsc.framework.api.*;
+import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApi;
+import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApiFactory;
+import de.unistuttgart.isw.sfsc.framework.api.services.channelfactory.SfscChannelFactoryParameter;
+import de.unistuttgart.isw.sfsc.framework.api.services.clientserver.SfscServer;
+import de.unistuttgart.isw.sfsc.framework.api.services.pubsub.SfscPublisher;
+import de.unistuttgart.isw.sfsc.framework.api.services.pubsub.SfscPublisherParameter;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.apache.plc4x.java.PlcDriverManager;
@@ -52,7 +57,7 @@ public class PLC4XMonitoringService {
     });
 
     public static void main(String[] args) {
-        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "WARN");
+        //System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "WARN");
         bootstrapConfiguration1 = new AdapterConfiguration().setCoreHost(Constants.CORE_ADDRESS).setCorePubTcpPort(Constants.CORE_PORT);
         registerSFSCService();
 

@@ -7,24 +7,19 @@ import de.unistuttgart.isw.sfsc.adapter.configuration.AdapterConfiguration;
 import de.unistuttgart.isw.sfsc.config.Constants;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XReadReply;
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XReadRequest;
-import de.unistuttgart.isw.sfsc.framework.api.SfscServer;
-import de.unistuttgart.isw.sfsc.framework.api.SfscServerParameter;
 import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApi;
 import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApiFactory;
+import de.unistuttgart.isw.sfsc.framework.api.services.clientserver.SfscServer;
+import de.unistuttgart.isw.sfsc.framework.api.services.clientserver.SfscServerParameter;
 import de.unistuttgart.isw.sfsc.framework.descriptor.SfscServiceDescriptor.ServerTags.RegexDefinition;
 import de.unistuttgart.isw.sfsc.framework.patterns.ackreqrep.AckServerResult;
-import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
-import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
-import org.apache.plc4x.java.opcua.connection.OpcuaTcpPlcConnection;
-import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -37,7 +32,7 @@ public class PLC4XProvider {
     private  PlcDriverManager driverManager = new PlcDriverManager();
 
     public static void main(String[] args) {
-        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "WARN");
+        //System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "WARN");
         PLC4XProvider service = new PLC4XProvider();
         service.start();
     }
