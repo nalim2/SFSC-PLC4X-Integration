@@ -2,7 +2,7 @@ version: "3"
 services:
   core1:
     container_name: core1
-    image: "nalim2/sfsc-core"
+    image: "nalim2/sfsc-core:linux-armv7"
     ports:
       - "1250:1250"
       - "1251:1251"
@@ -21,15 +21,15 @@ services:
       - BACKEND_HOST=core1
       - HAZELCAST_PORT=5701
 
-#  monitoring-service:
-#    image: "nalim2/sfsc-plc4x-monitoring:latest"
-#
-#    environment:
-#      - EXTERNEL_CORE_IP=core1
-#      - EXTERNEL_CORE_PORT=1251
-#      - RUN_MONITORING_SERVICE=true
-#      - RUN_READ_SERVICE=true
-#      - RUN_WRITE_SERVICE=false
-#      - RUN_OPC_EXAMPLE_SERVER=true
-#    links:
-#      - core1
+  monitoring-service:
+    image: "nalim2/sfsc-plc4x-monitoring:linux-armv7"
+
+    environment:
+      - EXTERNEL_CORE_IP=core1
+      - EXTERNEL_CORE_PORT=1251
+      - RUN_MONITORING_SERVICE=true
+      - RUN_READ_SERVICE=true
+      - RUN_WRITE_SERVICE=false
+      - RUN_OPC_EXAMPLE_SERVER=true
+    links:
+      - core1
