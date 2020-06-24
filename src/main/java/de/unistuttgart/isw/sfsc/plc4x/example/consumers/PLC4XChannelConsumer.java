@@ -36,7 +36,7 @@ public class PLC4XChannelConsumer {
                     .setSamplingTime(1000)
                     .setConnectionString("opcua:tcp://milo.digitalpetri.com:62541/milo")
                     .setType("opc")
-                    .putVariables("TestVar", "ns=2;s=HelloWorld/ScalarTypes/Int16")
+                    .putVariables("TestVar", "ns=2;s=Dynamic/RandomInt64")
                     .build();
 
             SfscClient client2 = serverSfscServiceApi.client();

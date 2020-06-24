@@ -57,7 +57,6 @@ public class PLC4XMonitoringService {
     });
 
     public static void main(String[] args) {
-        //System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "WARN");
         bootstrapConfiguration1 = new AdapterConfiguration().setCoreHost(Constants.CORE_ADDRESS).setCorePubTcpPort(Constants.CORE_PORT);
         registerSFSCService();
 

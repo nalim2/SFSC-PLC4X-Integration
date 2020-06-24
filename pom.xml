@@ -39,7 +39,7 @@
     <properties>
         <revision>0.1.0-SNAPSHOT</revision>
 
-        <plc4x.version>0.7.0</plc4x.version>
+        <plc4x.version>0.6.1-SNAPSHOT</plc4x.version>
         <slf4j.version>1.7.28</slf4j.version>
         <protobuf.version>3.10.0</protobuf.version>
         <jeromq.version>0.5.1</jeromq.version>
@@ -193,16 +193,6 @@
             <groupId>org.apache.plc4x</groupId>
             <artifactId>plc4j-connection-pool</artifactId>
             <version>${plc4x.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.plc4x</groupId>
@@ -216,18 +206,43 @@
             <artifactId>plc4j-driver-opcua</artifactId>
             <version>
                 ${plc4x.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.plc4x</groupId>
+            <artifactId>plc4j-driver-ads</artifactId>
+            <version>
+                ${plc4x.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.plc4x</groupId>
+            <artifactId>plc4j-driver-modbus</artifactId>
+            <version>
+                ${plc4x.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.plc4x</groupId>
+            <artifactId>plc4j-driver-s7</artifactId>
+            <version>
+                ${plc4x.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+        </dependency>
 
 
 

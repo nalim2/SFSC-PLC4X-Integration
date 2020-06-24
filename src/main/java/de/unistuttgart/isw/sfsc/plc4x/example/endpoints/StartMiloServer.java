@@ -13,14 +13,5 @@ public class StartMiloServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            while (true){
-
-                Thread.sleep(10000);
-
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

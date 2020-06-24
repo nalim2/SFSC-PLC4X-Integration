@@ -32,7 +32,6 @@ public class PLC4XProvider {
     private  PlcDriverManager driverManager = new PlcDriverManager();
 
     public static void main(String[] args) {
-        //System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "WARN");
         PLC4XProvider service = new PLC4XProvider();
         service.start();
     }
@@ -46,7 +45,6 @@ public class PLC4XProvider {
                             .setOutputMessageType(ByteString.copyFromUtf8("de.universitystuttgart.isw.sfsc.PLC4XReadReply"))
                             .setRegexDefinition(
                                     RegexDefinition.newBuilder().build())
-                            .setCustomTags(Map.of("plc4x-service-type", ByteString.copyFromUtf8("opc")))
                     ,
                     replyFunction() // Hier wird die Reply Funktion hineingegeben
             );
@@ -94,6 +92,7 @@ public class PLC4XProvider {
         return requestByteString -> {
             String valueResult = "";
             String statusResult = "";
+            String errorMessage = "";
             try {
                 PLC4XReadRequest request = PLC4XReadRequest.parseFrom(requestByteString);
                 // Do cool Stuff with the request
@@ -113,13 +112,14 @@ public class PLC4XProvider {
                     valueResult = response.getObject("LonlyVar").toString();
                 }
             } catch (InterruptedException e) {
-                statusResult = "BAD";
+                statusResult = "BAD" + e.getMessage();
+
             } catch (ExecutionException e) {
-                statusResult = "BAD";
+                statusResult = "BAD"+ e.getMessage();
             } catch (InvalidProtocolBufferException e) {
-                statusResult = "BAD";
+                statusResult = "BAD"+ e.getMessage();
             } catch (PlcConnectionException e) {
-                statusResult = "BAD";
+                statusResult = "BAD"+ e.getMessage();
             }
 
             // reply Answer
