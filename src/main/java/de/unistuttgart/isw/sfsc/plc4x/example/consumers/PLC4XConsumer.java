@@ -22,6 +22,7 @@ public class PLC4XConsumer {
 
     public static void main(String[] args) {
         try {
+            adapterConfiguration.setCoreHost("prj-sfsc03.isw.uni-stuttgart.de");
             SfscServiceApi clientSfscServiceApi = SfscServiceApiFactory.getSfscServiceApi(adapterConfiguration);
 
 
@@ -31,14 +32,25 @@ public class PLC4XConsumer {
                         event -> event.getStoreEventType() == StoreEvent.StoreEventType.CREATE
                                  && Objects.equals(event.getData().getServiceName(), "de.universitystuttgart.isw.sfsc.plc4x.read")
                 ).await();
-                Set<SfscServiceDescriptor> exampleServiceTags = clientSfscServiceApi.getServices("de.universitystuttgart.isw.sfsc.plc4x.read");
-
+                Set<SfscServiceDescriptor> exampleServiceTags = clientSfscServiceApi.getServices("de.universitystuttgart.isw.sfsc.plc4x.read2");
+            clientSfscServiceApi.addRegistryStoreEventListener(sfscServiceDescriptorStoreEvent -> {
+                        if(sfscServiceDescriptorStoreEvent.getData().getServiceName().equals("UNSER SERVICE NAME") &&
+                                sfscServiceDescriptorStoreEvent.getStoreEventType() == StoreEvent.StoreEventType.CREATE){
+                            // Subscribe auf den Service
+                            sfscServiceDescriptorStoreEvent.getData().getCustomTagsMap();
+                            clientSfscServiceApi.subscriber(sfscServiceDescriptorStoreEvent.getData(), message -> {
+                                // Send to bridge
+                            });
+                        }
+                    }
+                    );
 
             SfscClient client = clientSfscServiceApi.client();
             for ( SfscServiceDescriptor tags: exampleServiceTags) {
                 PLC4XReadRequest readRequest = PLC4XReadRequest.newBuilder()
-                        .setConnectionString("opcua:tcp://milo.digitalpetri.com:62541/milo")
-                        .setVariableAdress("ns=2;s=Dynamic/RandomInt64")
+                        //.setConnectionString("opcua:tcp://milo.digitalpetri.com:62541/milo")
+                        .setConnectionString("ads:tcp://141.58.103.40/141.58.103.40.1.1:851/141.58.102.36.1.1:9000")
+                        .setVariableAdress("bool1:BOOL")
                         .setName("Nutzlos")
                         .setType("opc")
                         .build();

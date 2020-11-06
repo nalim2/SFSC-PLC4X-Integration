@@ -3,6 +3,7 @@ services:
   core1:
     container_name: core1
     image: "nalim2/sfsc-core:linux-armv7"
+    #image: "nalim2/sfsc-core:linux-armv7"
     ports:
       - "1250:1250"
       - "1251:1251"
@@ -23,7 +24,8 @@ services:
 
   monitoring-service:
     image: "nalim2/sfsc-plc4x-monitoring:linux-armv7"
-
+    #image: "nalim2/sfsc-plc4x-monitoring:linux-armv7"
+    build: .
     environment:
       - EXTERNEL_CORE_IP=core1
       - EXTERNEL_CORE_PORT=1251

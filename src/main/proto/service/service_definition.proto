@@ -12,7 +12,6 @@ message PLC4XReadRequest {
 
 }
 
-
 message PLC4XReadReply {
     string value = 1;
     string status = 2;

@@ -18,8 +18,9 @@ import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
-import org.apache.plc4x.java.api.messages.PlcReadRequest;
-import org.apache.plc4x.java.api.messages.PlcReadResponse;
+import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest;
+import org.apache.plc4x.java.api.messages.PlcSubscriptionResponse;
+import org.apache.plc4x.java.api.model.PlcSubscriptionHandle;
 import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,7 @@ import java.net.ConnectException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Function;
 
@@ -43,7 +42,7 @@ public class PLC4XMonitoringService {
     static String ChannelName = UUID.randomUUID().toString();
     static Logger log = LoggerFactory.getLogger(PLC4XMonitoringService.class);
     static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
-
+    static Map<String, PlcConnection> connectionMap = new HashMap<>();
     static PlcDriverManager driverManager = new PooledPlcDriverManager(pooledPlcConnectionFactory -> {
         GenericKeyedObjectPoolConfig<PlcConnection> config = new GenericKeyedObjectPoolConfig<>();
         config.setJmxEnabled(true);
@@ -95,50 +94,63 @@ public class PLC4XMonitoringService {
             SfscPublisher publisher = sfscServiceApi.publisher(params); // custom Tags
             try {
                 PLC4XMonitoringRequest request = PLC4XMonitoringRequest.parseFrom(sfscMessage);
-                executorService.scheduleAtFixedRate(() -> {
 
                     PlcConnection connection = null;
+                    List<PlcSubscriptionHandle> subHandlesSession = new LinkedList<>();
+                    boolean anyError = false;
                     try {
-                        connection = driverManager.getConnection(request.getConnectionString());
-                        PlcReadRequest.Builder builderRequest = connection.readRequestBuilder();
+                        if(connectionMap.containsKey(request.getConnectionString())){
+                            connection = connectionMap.get(request.getConnectionString());
+                        }else{
+                            connection = driverManager.getConnection(request.getConnectionString());
+                        }
+                        PlcSubscriptionRequest.Builder subscriptionRequestBuilder =  connection.subscriptionRequestBuilder();
+
                         for (Map.Entry<String, String> entry :
                                 request.getVariablesMap().entrySet()) {
-                            builderRequest.addItem(entry.getKey(), entry.getValue());
+                            subscriptionRequestBuilder.addChangeOfStateField(entry.getKey(), entry.getValue());
                         }
-                        CompletableFuture<? extends PlcReadResponse> future = builderRequest.build().execute();
+                        CompletableFuture<? extends PlcSubscriptionResponse> future = subscriptionRequestBuilder.build().execute();
 
-                        PlcReadResponse response = future.get(1, TimeUnit.SECONDS);
-                        long seconds = System.currentTimeMillis() / 1000;
-                        int nanos = (int) (System.nanoTime() % 1_000_000);
-                        Timestamp timestamp = Timestamp.newBuilder().setSeconds(seconds)
-                                .setNanos(nanos).build();
+                        PlcSubscriptionResponse response = future.get(1, TimeUnit.SECONDS);
+                        for (String keyOfSubs :
+                                request.getVariablesMap().keySet()) {
+                            PlcSubscriptionHandle handle = response.getSubscriptionHandle(keyOfSubs);
+                            if(handle != null ){
+                                subHandlesSession.add(handle);
+                                handle.register(plcSubscriptionEvent -> {
+                                    long seconds = System.currentTimeMillis() / 1000;
+                                    int nanos = (int) (System.nanoTime() % 1_000_000);
+                                    Timestamp timestamp = Timestamp.newBuilder().setSeconds(seconds)
+                                            .setNanos(nanos).build();
 
-                        PLC4XMonitorUpdate.Builder builder = PLC4XMonitorUpdate.newBuilder()
-                                .setItemStatus("GOOD")
-                                .setTime(timestamp);
-                        for (String keys :
-                                response.getFieldNames()) {
-                            builder.putValues(keys, response.getString(keys));
-
+                                    PLC4XMonitorUpdate.Builder builder = PLC4XMonitorUpdate.newBuilder()
+                                            .setItemStatus("GOOD")
+                                            .setTime(timestamp);
+                                    for (String keys :
+                                            plcSubscriptionEvent.getFieldNames()) {
+                                        builder.putValues(keys, plcSubscriptionEvent.getString(keys));
+                                    }
+                                    publisher.publish(builder.build());
+                                });
+                            }else{
+                                anyError = true;
+                            }
                         }
-                        publisher.publish(builder.build());
-                    } catch (PlcConnectionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (TimeoutException e) {
-                        e.printStackTrace();
-                    }finally {
-                        try {
-                            if(connection != null) connection.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    } catch (PlcConnectionException | InterruptedException | ExecutionException | TimeoutException e) {
+                        anyError = true;
+                    } finally {
+                        if(anyError){
+                            try {
+
+                                if(connection != null) connection.unsubscriptionRequestBuilder().addHandles(subHandlesSession).build().execute();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
+
                     }
 
-                }, 0, request.getSamplingTime(), TimeUnit.MILLISECONDS);
 
                 // TODO include a function to automatic delete a handle after unsubscribe
 

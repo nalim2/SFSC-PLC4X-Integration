@@ -19,8 +19,9 @@ import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
@@ -30,14 +31,17 @@ import java.util.function.Function;
 public class PLC4XProvider {
     private ConcurrentMap<String, PlcConnection> availableConnections = new ConcurrentHashMap<>();
     private  PlcDriverManager driverManager = new PlcDriverManager();
-
+    static Logger log = LoggerFactory.getLogger(PLC4XProvider.class);
     public static void main(String[] args) {
+
         PLC4XProvider service = new PLC4XProvider();
         service.start();
     }
 
     public void start(){
         AdapterConfiguration adapterConfiguration1 = new AdapterConfiguration().setCoreHost(Constants.CORE_ADDRESS).setCorePubTcpPort(Constants.CORE_PORT);
+
+        adapterConfiguration1.setCoreHost("prj-sfsc03.isw.uni-stuttgart.de");
         try {
             SfscServiceApi serverSfscServiceApi = SfscServiceApiFactory.getSfscServiceApi(adapterConfiguration1);
             SfscServer server = serverSfscServiceApi.server(new SfscServerParameter().setServiceName("de.universitystuttgart.isw.sfsc.plc4x.read")
@@ -90,6 +94,7 @@ public class PLC4XProvider {
 
     Function<ByteString, AckServerResult> replyFunction() {
         return requestByteString -> {
+            System.out.println("Got request");
             String valueResult = "";
             String statusResult = "";
             String errorMessage = "";
