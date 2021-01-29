@@ -9,6 +9,7 @@ import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitorUpdate.Tim
 import de.unistuttgart.isw.sfsc.example.services.messages.PLC4XMonitoringRequest;
 import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApi;
 import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApiFactory;
+import de.unistuttgart.isw.sfsc.framework.api.services.channelfactory.ChannelFactoryResult;
 import de.unistuttgart.isw.sfsc.framework.api.services.channelfactory.SfscChannelFactoryParameter;
 import de.unistuttgart.isw.sfsc.framework.api.services.clientserver.SfscServer;
 import de.unistuttgart.isw.sfsc.framework.api.services.pubsub.SfscPublisher;
@@ -78,7 +79,7 @@ public class PLC4XMonitoringService {
         }
     }
 
-    static class ChannelGenerator implements Function<ByteString, SfscPublisher> {
+    static class ChannelGenerator implements Function<ByteString, ChannelFactoryResult> {
 
         private final SfscServiceApi sfscServiceApi;
 
@@ -87,7 +88,7 @@ public class PLC4XMonitoringService {
         }
 
         @Override
-        public SfscPublisher apply(ByteString sfscMessage) {
+        public ChannelFactoryResult apply(ByteString sfscMessage) {
             SfscPublisherParameter params = new SfscPublisherParameter()
                     .setServiceName(ChannelName)
                     .setOutputMessageType(ByteString.copyFromUtf8(PLC4XMonitoringRequest.class.getName())).setUnregistered(true);
@@ -157,7 +158,14 @@ public class PLC4XMonitoringService {
             } catch (InvalidProtocolBufferException e) {
                 e.printStackTrace();
             }
-            return publisher;
+            ChannelFactoryResult result = new ChannelFactoryResult(publisher, () -> {
+                System.out.println("Message got delivered start publishin");
+            },
+                    () -> {
+                        System.out.println("Error in delivery abort subscription");
+                    });
+
+            return result;
 
         }
 

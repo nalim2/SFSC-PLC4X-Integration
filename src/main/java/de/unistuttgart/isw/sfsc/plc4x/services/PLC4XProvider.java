@@ -11,7 +11,7 @@ import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApi;
 import de.unistuttgart.isw.sfsc.framework.api.SfscServiceApiFactory;
 import de.unistuttgart.isw.sfsc.framework.api.services.clientserver.SfscServer;
 import de.unistuttgart.isw.sfsc.framework.api.services.clientserver.SfscServerParameter;
-import de.unistuttgart.isw.sfsc.framework.descriptor.SfscServiceDescriptor.ServerTags.RegexDefinition;
+import de.unistuttgart.isw.sfsc.framework.descriptor.SfscServiceDescriptor;
 import de.unistuttgart.isw.sfsc.framework.patterns.ackreqrep.AckServerResult;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
@@ -48,7 +48,7 @@ public class PLC4XProvider {
                             .setInputMessageType(ByteString.copyFromUtf8("de.universitystuttgart.isw.sfsc.PLC4XReadRequest"))
                             .setOutputMessageType(ByteString.copyFromUtf8("de.universitystuttgart.isw.sfsc.PLC4XReadReply"))
                             .setRegexDefinition(
-                                    RegexDefinition.newBuilder().build())
+                                    SfscServiceDescriptor.ServiceTags.ServerTags.RegexDefinition.newBuilder().build())
                     ,
                     replyFunction() // Hier wird die Reply Funktion hineingegeben
             );

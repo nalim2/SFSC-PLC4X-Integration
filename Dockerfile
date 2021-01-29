@@ -1,4 +1,4 @@
-FROM --platform=linux/arm/v7 adoptopenjdk/openjdk12
+FROM  adoptopenjdk/openjdk12
 # --platform=linux/arm/v7
 WORKDIR /app
 
